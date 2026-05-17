@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FARZAD — معمار</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Vazirmatn:wght@300;400;700&display=swap');
+
+  :root {
+    --bg: #0b0b0b;
+    --white: #f0ece4;
+    --accent: #c8a96e;
+    --gray: #555;
+    --crack: #1e1e1e;
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Vazirmatn', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s;
+    mix-blend-mode: difference;
+  }
+  .cursor-follow {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.12s ease;
+    mix-blend-mode: difference;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 3rem;
+    mix-blend-mode: difference;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 6px;
+    color: var(--white);
+    text-decoration: none;
+  }
+
+  .nav-right {
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .nav-right a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+  }
+  .nav-right a:hover { opacity: 1; }
+
+  .lang-btn {
+    background: none;
+    border: 1px solid rgba(240,236,228,0.3);
+    color: var(--white);
+    padding: 0.4rem 1rem;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    cursor: none;
+    transition: all 0.3s;
+  }
+  .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ───────────── HERO ───────────── */
+  #hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 4rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* crack lines SVG overlay */
+  #hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cline x1='0' y1='35%25' x2='60%25' y2='42%25' stroke='%23c8a96e' stroke-width='0.4' opacity='0.25'/%3E%3Cline x1='60%25' y1='42%25' x2='100%25' y2='38%25' stroke='%23c8a96e' stroke-width='0.4' opacity='0.25'/%3E%3Cline x1='20%25' y1='0' x2='25%25' y2='35%25' stroke='%23c8a96e' stroke-width='0.3' opacity='0.15'/%3E%3Cline x1='70%25' y1='100%25' x2='60%25' y2='42%25' stroke='%23c8a96e' stroke-width='0.3' opacity='0.15'/%3E%3C/svg%3E") no-repeat center/cover;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .hero-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(120px, 20vw, 280px);
+    line-height: 0.85;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(240,236,228,0.08);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    letter-spacing: -5px;
+    z-index: 0;
+    user-select: none;
+  }
+
+  .hero-content { position: relative; z-index: 2; }
+
+  .hero-tag {
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 1;
+    font-weight: 700;
+    opacity: 0;
+    animation: fadeUp 1s 0.4s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    opacity: 0.4;
+    margin-top: 1.5rem;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 1s 0.6s forwards;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 3rem;
+    right: 3rem;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 1s forwards;
+  }
+  .scroll-hint span {
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.4;
+    writing-mode: vertical-rl;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: growLine 2s 1.5s ease infinite;
+  }
+
+  /* ───────────── PROJECTS ───────────── */
+  #projects {
+    padding: 6rem 0;
+    position: relative;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 2rem;
+    padding: 0 3rem;
+    margin-bottom: 4rem;
+  }
+
+  .section-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 6vw, 5rem);
+    letter-spacing: 3px;
+    color: var(--white);
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--accent), transparent);
+  }
+
+  /* fullscreen project item */
+  .project-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 70vh;
+    margin-bottom: 2px;
+    overflow: hidden;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .project-item:nth-child(even) .project-visual { order: 2; }
+  .project-item:nth-child(even) .project-info { order: 1; }
+
+  .project-visual {
+    position: relative;
+    overflow: hidden;
+    background: var(--crack);
+  }
+
+  .project-visual-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+  }
+
+  /* diagonal crack overlay on each project */
+  .project-visual-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cline x1='0' y1='100%25' x2='100%25' y2='0' stroke='%23c8a96e' stroke-width='0.6' opacity='0.12'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .project-bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.08;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.8s cubic-bezier(0.16,1,0.3,1), opacity 0.5s;
+  }
+
+  .project-item:hover .project-bg { opacity: 0.18; transform: scale(1.05); }
+
+  .project-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem;
+    position: relative;
+  }
+
+  .project-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 4px;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    opacity: 0.6;
+  }
+
+  .project-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    font-weight: 700;
+  }
+
+  .project-type {
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2rem;
+  }
+
+  .project-desc {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: rgba(240,236,228,0.5);
+    max-width: 380px;
+  }
+
+  .project-year {
+    margin-top: auto;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    opacity: 0.25;
+    padding-top: 3rem;
+  }
+
+  /* hover underline */
+  .project-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 1px;
+    background: var(--accent);
+    transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
+  }
+  .project-item:hover::after { width: 100%; }
+
+  /* ───────────── ABOUT ───────────── */
+  #about {
+    padding: 8rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    position: relative;
+  }
+
+  #about::before {
+    content: 'FARZAD';
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px,12vw,180px);
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(200,169,110,0.06);
+    position: absolute;
+    bottom: 3rem;
+    right: 0;
+    letter-spacing: 10px;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .about-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem,5vw,4.5rem);
+    letter-spacing: 2px;
+    line-height: 1;
+    margin-bottom: 2rem;
+  }
+
+  .about-label span {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.55em;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  .about-text p {
+    font-size: 0.95rem;
+    line-height: 2;
+    color: rgba(240,236,228,0.55);
+    margin-bottom: 1.5rem;
+  }
+
+  .about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 3rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 3rem;
+  }
+
+  .stat-item {}
+  .stat-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin-top: 0.3rem;
+  }
+
+  .about-skills {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .skill-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .skill-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .skill-meta span:last-child { color: var(--accent); }
+
+  .skill-bar {
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill-fill {
+    position: absolute;
+    top: 0; left: 0; height: 100%;
+    background: linear-gradient(to right, var(--accent), transparent);
+    animation: fillBar 1.5s ease forwards;
+  }
+
+  /* ───────────── CONTACT ───────────── */
+  #contact {
+    padding: 8rem 3rem;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #contact::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cline x1='50%25' y1='0' x2='30%25' y2='50%25' stroke='%23c8a96e' stroke-width='0.5' opacity='0.1'/%3E%3Cline x1='30%25' y1='50%25' x2='70%25' y2='100%25' stroke='%23c8a96e' stroke-width='0.5' opacity='0.1'/%3E%3Cline x1='30%25' y1='50%25' x2='0' y2='70%25' stroke='%23c8a96e' stroke-width='0.3' opacity='0.08'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .contact-tag {
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2rem;
+  }
+
+  .contact-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 6rem);
+    line-height: 1.1;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .contact-title em { font-style: italic; color: var(--accent); }
+
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  .contact-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--white);
+    padding: 2rem 3rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  .contact-link:hover::before { transform: translateY(0); }
+  .contact-link:hover { color: var(--bg); }
+
+  .contact-link-label {
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.4;
+    position: relative;
+  }
+
+  .contact-link-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    position: relative;
+  }
+
+  footer {
+    padding: 2rem 3rem;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    opacity: 0.3;
+    text-transform: uppercase;
+  }
+
+  /* ───────────── ANIMATIONS ───────────── */
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(30px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  @keyframes growLine {
+    0%   { transform: scaleY(0); transform-origin: top; }
+    50%  { transform: scaleY(1); transform-origin: top; }
+    51%  { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  @keyframes fillBar {
+    from { width: 0; }
+  }
+
+  /* reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ───────────── RESPONSIVE ───────────── */
+  @media (max-width: 900px) {
+    .project-item { grid-template-columns: 1fr; min-height: auto; }
+    .project-item:nth-child(even) .project-visual { order: 0; }
+    .project-item:nth-child(even) .project-info { order: 0; }
+    .project-visual { height: 280px; }
+    .project-info { padding: 2.5rem 2rem; }
+    #about { grid-template-columns: 1fr; gap: 3rem; padding: 5rem 2rem; }
+    nav { padding: 1.5rem 2rem; }
+    .hero-title { font-size: clamp(2.5rem, 10vw, 5rem); }
+    #hero { padding: 3rem 2rem; }
+    .section-header { padding: 0 2rem; }
+    #contact { padding: 5rem 2rem; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follow" id="cursorFollow"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">FARZAD</a>
+  <div class="nav-right">
+    <a href="#projects" data-fa="کارها" data-en="Work">کارها</a>
+    <a href="#about" data-fa="درباره" data-en="About">درباره</a>
+    <a href="#contact" data-fa="تماس" data-en="Contact">تماس</a>
+    <button class="lang-btn" onclick="toggleLang()">EN</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-number" aria-hidden="true">AR</div>
+  <div class="hero-content">
+    <p class="hero-tag" data-fa="معمار — ایران" data-en="Architect — Iran">معمار — ایران</p>
+    <h1 class="hero-title">
+      <span data-fa="معماری که" data-en="Architecture">معماری که</span><br>
+      <em data-fa="حرف می‌زند" data-en="That Speaks">حرف می‌زند</em>
+    </h1>
+    <p class="hero-sub" data-fa="طراحی و اجرای ساختمان‌های لوکس" data-en="Design & Execution of Luxury Buildings">طراحی و اجرای ساختمان‌های لوکس</p>
+  </div>
+  <div class="scroll-hint">
+    <span data-fa="اسکرول" data-en="Scroll">اسکرول</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-header reveal">
+    <h2 class="section-label" data-fa="پروژه‌ها" data-en="Projects">پروژه‌ها</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- 1 -->
+  <div class="project-item reveal">
+    <div class="project-visual">
+      <div class="project-visual-inner">
+        <div class="project-bg" style="background: radial-gradient(circle at 30% 50%, #3a2a1a 0%, #0b0b0b 70%);"></div>
+        🏠
+      </div>
+    </div>
+    <div class="project-info">
+      <p class="project-number">01 —</p>
+      <h3 class="project-name" data-fa="ویلای لوکس" data-en="Luxury Villa">ویلای لوکس</h3>
+      <p class="project-type" data-fa="مسکونی" data-en="Residential">مسکونی</p>
+      <p class="project-desc" data-fa="فضایی که در آن سکوت و طراحی معاصر در هم می‌آمیزند. معماری که زندگی را متحول می‌کند." data-en="A space where silence and contemporary design intertwine. Architecture that transforms life.">فضایی که در آن سکوت و طراحی معاصر در هم می‌آمیزند. معماری که زندگی را متحول می‌کند.</p>
+      <p class="project-year">2023</p>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="project-item reveal">
+    <div class="project-visual">
+      <div class="project-visual-inner">
+        <div class="project-bg" style="background: radial-gradient(circle at 70% 50%, #1a2a3a 0%, #0b0b0b 70%);"></div>
+        🏢
+      </div>
+    </div>
+    <div class="project-info">
+      <p class="project-number">02 —</p>
+      <h3 class="project-name" data-fa="برج مسکونی" data-en="Residential Tower">برج مسکونی</h3>
+      <p class="project-type" data-fa="مسکونی" data-en="Residential">مسکونی</p>
+      <p class="project-desc" data-fa="ساختمانی که در آسمان شهر نقش می‌بندد. هر واحد، روایتی مستقل از زندگی مدرن." data-en="A building that carves its mark in the city's skyline. Each unit, an independent narrative of modern life.">ساختمانی که در آسمان شهر نقش می‌بندد. هر واحد، روایتی مستقل از زندگی مدرن.</p>
+      <p class="project-year">2022</p>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="project-item reveal">
+    <div class="project-visual">
+      <div class="project-visual-inner">
+        <div class="project-bg" style="background: radial-gradient(circle at 50% 30%, #2a1a1a 0%, #0b0b0b 70%);"></div>
+        🍽️
+      </div>
+    </div>
+    <div class="project-info">
+      <p class="project-number">03 —</p>
+      <h3 class="project-name" data-fa="رستوران" data-en="Restaurant">رستوران</h3>
+      <p class="project-type" data-fa="تجاری" data-en="Commercial">تجاری</p>
+      <p class="project-desc" data-fa="جایی که غذا، هنر می‌شود. فضایی حسی که مرزهای معماری داخلی را به چالش می‌کشد." data-en="Where food becomes art. A sensory space that challenges the boundaries of interior architecture.">جایی که غذا، هنر می‌شود. فضایی حسی که مرزهای معماری داخلی را به چالش می‌کشد.</p>
+      <p class="project-year">2022</p>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="project-item reveal">
+    <div class="project-visual">
+      <div class="project-visual-inner">
+        <div class="project-bg" style="background: radial-gradient(circle at 40% 60%, #1a2a1a 0%, #0b0b0b 70%);"></div>
+        🎓
+      </div>
+    </div>
+    <div class="project-info">
+      <p class="project-number">04 —</p>
+      <h3 class="project-name" data-fa="مجتمع آموزشی" data-en="Educational Complex">مجتمع آموزشی</h3>
+      <p class="project-type" data-fa="آموزشی" data-en="Educational">آموزشی</p>
+      <p class="project-desc" data-fa="فضایی که نسل فردا را شکل می‌دهد. معماری در خدمت یادگیری و خلاقیت." data-en="A space that shapes tomorrow's generation. Architecture in service of learning and creativity.">فضایی که نسل فردا را شکل می‌دهد. معماری در خدمت یادگیری و خلاقیت.</p>
+      <p class="project-year">2021</p>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-text reveal">
+    <h2 class="about-label">
+      <span data-fa="معمار" data-en="Architect">معمار</span>
+      FARZAD
+    </h2>
+    <p data-fa="بیش از دو دهه تجربه در طراحی و اجرای پروژه‌های لوکس. هر ساختمانی که می‌سازم داستانی است که باید روایت شود — داستان صاحبش، مکانش، و زمانه‌اش." data-en="Over two decades of experience in designing and executing luxury projects. Every building I create is a story waiting to be told — the story of its owner, its place, and its time.">بیش از دو دهه تجربه در طراحی و اجرای پروژه‌های لوکس. هر ساختمانی که می‌سازم داستانی است که باید روایت شود — داستان صاحبش، مکانش، و زمانه‌اش.</p>
+    <p data-fa="تخصصم در معماری لوکس — از ویلاهای خصوصی تا مراکز تجاری — ریشه در باور عمیقم به این دارد که فضا، رفتار انسان را شکل می‌دهد." data-en="My specialty in luxury architecture — from private villas to commercial centers — is rooted in my deep conviction that space shapes human behavior.">تخصصم در معماری لوکس — از ویلاهای خصوصی تا مراکز تجاری — ریشه در باور عمیقم به این دارد که فضا، رفتار انسان را شکل می‌دهد.</p>
+    <div class="about-stats">
+      <div class="stat-item">
+        <div class="stat-number">+۲۰</div>
+        <div class="stat-label" data-fa="سال تجربه" data-en="Years Experience">سال تجربه</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">+۵۰</div>
+        <div class="stat-label" data-fa="پروژه اجرا شده" data-en="Projects Built">پروژه اجرا شده</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="about-skills reveal">
+    <div class="skill-row">
+      <div class="skill-meta">
+        <span data-fa="طراحی معماری" data-en="Architectural Design">طراحی معماری</span>
+        <span>96%</span>
+      </div>
+      <div class="skill-bar"><div class="skill-fill" style="width:96%"></div></div>
+    </div>
+    <div class="skill-row">
+      <div class="skill-meta">
+        <span data-fa="نظارت اجرایی" data-en="Site Supervision">نظارت اجرایی</span>
+        <span>92%</span>
+      </div>
+      <div class="skill-bar"><div class="skill-fill" style="width:92%"></div></div>
+    </div>
+    <div class="skill-row">
+      <div class="skill-meta">
+        <span data-fa="طراحی داخلی" data-en="Interior Design">طراحی داخلی</span>
+        <span>88%</span>
+      </div>
+      <div class="skill-bar"><div class="skill-fill" style="width:88%"></div></div>
+    </div>
+    <div class="skill-row">
+      <div class="skill-meta">
+        <span data-fa="مدیریت پروژه" data-en="Project Management">مدیریت پروژه</span>
+        <span>90%</span>
+      </div>
+      <div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div>
+    </div>
+    <div class="skill-row">
+      <div class="skill-meta">
+        <span>BIM / Revit</span>
+        <span>85%</span>
+      </div>
+      <div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <p class="contact-tag reveal" data-fa="بگذار صحبت کنیم" data-en="Let's Talk">بگذار صحبت کنیم</p>
+  <h2 class="contact-title reveal">
+    <span data-fa="آماده‌ام برای" data-en="Ready for">آماده‌ام برای</span><br>
+    <em data-fa="پروژه بعدی شما" data-en="Your Next Project">پروژه بعدی شما</em>
+  </h2>
+  <div class="contact-links reveal">
+    <a href="mailto:farzad@email.com" class="contact-link">
+      <span class="contact-link-label" data-fa="ایمیل" data-en="Email">ایمیل</span>
+      <span class="contact-link-value">farzad@email.com</span>
+    </a>
+    <a href="tel:+989xxxxxxxxx" class="contact-link">
+      <span class="contact-link-label" data-fa="تلفن" data-en="Phone">تلفن</span>
+      <span class="contact-link-value">+98 9XX XXX XXXX</span>
+    </a>
+    <a href="https://instagram.com" target="_blank" class="contact-link">
+      <span class="contact-link-label">Instagram</span>
+      <span class="contact-link-value">@farzad.arch</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <span>© 2024 FARZAD</span>
+  <span data-fa="معماری — ایران" data-en="Architecture — Iran">معماری — ایران</span>
+</footer>
+
+<script>
+  // ─── Custom Cursor ───
+  const cursor = document.getElementById('cursor');
+  const follow = document.getElementById('cursorFollow');
+  let mx=0, my=0, fx=0, fy=0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx - 5 + 'px';
+    cursor.style.top  = my - 5 + 'px';
+  });
+
+  function animateFollow() {
+    fx += (mx - fx) * 0.12;
+    fy += (my - fy) *.12;
+    follow.style.left = fx - 18 + 'px';
+    follow.style.top  = fy - 18 + 'px';
+    requestAnimationFrame(animateFollow);
+  }
+  animateFollow();
+
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'scale(2)';
+      follow.style.transform = 'scale(1.5)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'scale(1)';
+      follow.style.transform = 'scale(1)';
+    });
+  });
+
+  // ─── Scroll Reveal ───
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => obs.observe(r));
+
+  // ─── Language Toggle ───
+  let lang = 'fa';
+  function toggleLang() {
+    lang = lang === 'fa' ? 'en' : 'fa';
+    const btn = document.querySelector('.lang-btn');
+    btn.textContent = lang === 'fa' ? 'EN' : 'فا';
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
+
+    document.querySelectorAll('[data-fa]').forEach(el => {
+      el.textContent = lang === 'fa' ? el.dataset.fa : el.dataset.en;
+    });
+  }
+</script>
+</body>
+</html>
